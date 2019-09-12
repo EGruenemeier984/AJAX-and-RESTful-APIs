@@ -1,17 +1,29 @@
 /*  Exercise 01_11_01
 
     Whole Spectrum Energy Solutions
-    Author: 
-    Date:   
+    Author: Ethan Gruenemeier
+    Date: 9.12.19 
 
     Filename: script.js
-*/
+*/ 
 
 "use strict";
 
 // global variables
-var selectedCity = "Tucson, AZ";
-var weatherReport;
+let selectedCity = "Tucson, AZ";
+let weatherReport;
+let httpRequest = false;
+
+function getRequestObject() {
+   try {
+      httpRequest = new XMLHttpRequest();
+   } catch (requestError) {
+      document.querySelector("p.error").innerHTML = "Forecast not supported by your browser, because you OLD!!!";
+      document.querySelector("p.error").style.display = "block";
+      return false;
+   }
+   return httpRequest;
+}
 
 function getWeather(evt) {
    var latitude;
@@ -33,6 +45,32 @@ function getWeather(evt) {
       latitude = 45.5601062;
       longitude = -73.7120832;
    }
+   if (!httpRequest){
+      httpRequest = getRequestObject();
+   }
+   httpRequest.abort();
+   httpRequest.open("get", "solar.php?" + "lat=" + latitude + "&lng=" + longitude, true);
+   httpRequest.send(null);
+}
+
+function fillWeather() {
+   if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+      weatherReport = JSON.parse(httpRequest.responseText);
+   }
+   httpRequest.onreadystatechange = fillWeather;
+   if (httpRequest.readyState === 4 
+      && httpRequest.status === 200) {
+      weatherReport = JSON.parse(httpRequest.responseText);
+      var days = ["Sunday","Monday","Tuesday",
+          "Wednesday","Thursday","Friday","Saturday"];
+      var dateValue = new 
+          Date(weatherReport.daily.data[0].time);
+      var dayOfWeek = dateValue.getDay();
+      var rows = document.querySelectorAll
+          ("section.week table tbody tr");
+      document.querySelector("section.week table caption").
+          innerHTML = selectedCity;
+    }
 }
 
 var locations = document.querySelectorAll("section ul li");
