@@ -5,7 +5,7 @@
     Date: 9.12.19 
 
     Filename: script.js
-*/ 
+*/
 
 "use strict";
 
@@ -45,19 +45,18 @@ function getWeather(evt) {
       latitude = 45.5601062;
       longitude = -73.7120832;
    }
-   if (!httpRequest){
+   if (!httpRequest) {
       httpRequest = getRequestObject();
    }
    httpRequest.abort();
-   httpRequest.open("get", "solar.php?" + "lat=" + latitude + "&lng=" + longitude, true);
+   httpRequest.open("get", "solar.php?" + "lat=" + latitude +
+      "&lng=" + longitude, true);
    httpRequest.send(null);
+
+   httpRequest.onreadystatechange = fillWeather;
 }
 
 function fillWeather() {
-   if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-      weatherReport = JSON.parse(httpRequest.responseText);
-   }
-   httpRequest.onreadystatechange = fillWeather;
    if (httpRequest.readyState === 4 
       && httpRequest.status === 200) {
       weatherReport = JSON.parse(httpRequest.responseText);
